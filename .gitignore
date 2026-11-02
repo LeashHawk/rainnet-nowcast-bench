@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+local_checks/tmp_*/
+artifacts/
+logs/
+checkpoints/
+*.pth
+*.npz
+
+# Keep frozen scientific artifacts in the Git release.
+!results/**/*.npz
+!data_samples/**/*.npz
+!data_samples/**/*.npy
+# Local datasets, weights, environments and editor state
+data/
+*.pt
+*.ckpt
+*.zip
+.venv/
+.env
+.vscode/
+.pytest_cache/

@@ -1,0 +1,26 @@
+name: Repository checks
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: python scripts/check_repository.py
+      - run: python -m pip install torch==1.12.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install numpy==1.24.3 h5py==3.12.1 tqdm matplotlib==3.7.5
+      - name: Synthetic checks (no archive download)
+        env:
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'
+          MPLBACKEND: Agg
+        run: |
+          python examples/synthetic_demo.py
+          python local_checks/test_nowcast_models.py
+          python local_checks/test_extended_eval.py
+          python local_checks/test_ext_analysis.py
+          python local_checks/test_tau_result_gate.py
+          python local_checks/test_eval_json_safety.py
+          python local_checks/test_blocked_index.py

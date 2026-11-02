@@ -1,0 +1,24 @@
+# sha256 of the released checkpoints (Zenodo deposit; not in the git tree).
+# Every paper number traces to one of these checkpoints via the eval JSONs
+# (which record the checkpoint path) and this manifest.
+0505c9c424e5f8d7dc1ec45c6ba2ef6adca2801cb2f4522e1e7715cac245112b  convlstm_rainnet.pth                (as-released, seed 0)
+616b49bb7e0928eddec79d3521f7e01cb4259e066c6f55cf3a9f98d4dc615493  convlstm_rainnet_seed1.pth          (as-released, seed 1)
+f5fdb335e44edd2ee07c04a3585f3f42f42f18b5f82204b1d88113e7ca703126  convlstm_rainnet_seed2.pth          (as-released, seed 2)
+d58d3ff509ac423478db8d5ded9800a1b2f3c346d3bca57391e7bc0afeec19a9  convlstm_ed_mse_rainnet_seed0.pth
+7a6e3cc2597cc83dd0a6bfb6245bd7c03b65e51d943723a2f5a773a391882c7e  convlstm_ed_mse_rainnet_seed1.pth
+535a7858f80588a38a27ba7582397f2603bb19af6e39f2cfe9750376c4f4641f  convlstm_ed_mse_rainnet_seed2.pth
+43541f242f0bdd84272223843c06f3db2ba040f91c600064444b89f9c87ea011  unet_mse_rainnet_seed0.pth
+1bb07ad885ece5ba065449f045be142735c4a4fe72e23b58e77622cb5c1b83c7  unet_mse_rainnet_seed1.pth
+79b0e575aced9c2ac3eb404646b020a15f4a558f7f3ca8517b09068ea1f75fca  unet_mse_rainnet_seed2.pth
+73efff6d7411a9dd2f914270fe77415c2e2dbb13e7b23113f1c924a964b00114  convlstm_ed_balanced_rainnet_seed0.pth
+cc5aa4c54493f4813d8bcd44901a878a89c8d27b08a0cbc7deda6c8ed220acba  convlstm_ed_balanced_rainnet_seed1.pth
+92e3ef7b7d6018eeeb4aab1744168a76a8403f1f026081b1ed230d1fba4acaeb  convlstm_ed_balanced_rainnet_seed2.pth
+fc32571a0f7642f5e84185340e570a83b30d18facb9c229ee28bd36c8f5c56c3  unet_balanced_rainnet_seed0.pth
+a0f6c1a45c91f5c271b5d32e6c58827e255fb0335104dd531336b0485a34c7de  unet_balanced_rainnet_seed1.pth
+e628d1e0cd3d06711e6d4b61bd7756c2ec43a407b566ac4044f4566e39d16689  unet_balanced_rainnet_seed2.pth
+3613bd37e2837d5c3549c045fa4935c2e171e68ddc40701143ba00eb8aee3336  simvp_mse_rainnet_seed0.pth
+f0ca1adfdd7f93c1ec4904bf4c465cf08f3eb94922239cf08adc7bbd62065f7b  simvp_mse_rainnet_seed1.pth
+3f13f251df79a7246d8ff909d2963830bb67d8f9c5c6fb1367e73be882cb6b9b  simvp_mse_rainnet_seed2.pth
+a2a66de2c2ff398fc8bb7228e7cb98d7f6e046a1c4cb3c58c1a1bbfebc21c77f  tau_ddr_rainnet_seed0.pth           (final; early-stopped, gate-accepted)
+3c1d22ce1bd76c2faffe42f7e840d6f7bc973673b7721807d00f4ea4c0bbd451  tau_ddr_rainnet_seed1.pth           (final; early-stopped, gate-accepted)
+a5af95ab079d9c711f5de66ee1022d8b416269b6c3d83ad5548fd73623e785ca  tau_ddr_rainnet_seed2.pth           (final; early-stopped, gate-accepted)

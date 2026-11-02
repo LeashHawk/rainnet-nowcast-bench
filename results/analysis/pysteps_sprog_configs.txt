@@ -1,0 +1,8 @@
+sprog_a1_c6_p0.1|{"ar_order": 1, "n_cascade_levels": 6, "precip_thr": 0.1, "t_flow": 10}
+sprog_a1_c6_p1.0|{"ar_order": 1, "n_cascade_levels": 6, "precip_thr": 1.0, "t_flow": 10}
+sprog_a1_c8_p0.1|{"ar_order": 1, "n_cascade_levels": 8, "precip_thr": 0.1, "t_flow": 10}
+sprog_a1_c8_p1.0|{"ar_order": 1, "n_cascade_levels": 8, "precip_thr": 1.0, "t_flow": 10}
+sprog_a2_c6_p0.1|{"ar_order": 2, "n_cascade_levels": 6, "precip_thr": 0.1, "t_flow": 10}
+sprog_a2_c6_p1.0|{"ar_order": 2, "n_cascade_levels": 6, "precip_thr": 1.0, "t_flow": 10}
+sprog_a2_c8_p0.1|{"ar_order": 2, "n_cascade_levels": 8, "precip_thr": 0.1, "t_flow": 10}
+sprog_a2_c8_p1.0|{"ar_order": 2, "n_cascade_levels": 8, "precip_thr": 1.0, "t_flow": 10}

@@ -1,0 +1,224 @@
+# RainNet hourly precipitation nowcasting benchmark
+
+Code and result provenance for the paper *"Validation-isolated benchmarking
+of hourly gridded precipitation nowcasting on the RainNet archive: classical,
+deep, and verification-aware baselines"* (citation added upon publication).
+
+A reproducible benchmark for hourly precipitation nowcasting built on the
+RainNet dataset (Chen et al., NeurIPS 2022 Datasets & Benchmarks): given
+10 past hourly frames, predict the next 10 hourly frames (+1h … +10h) over
+the eastern United States on the low-resolution NLDAS product (208×333,
+0.125° ≈ 13 km). Seven deep-model rows × 3 seeds are trained under one
+protocol and compared with four classical rows (persistence, optical flow,
+validation-tuned pysteps LK extrapolation and S-PROG), with a chronological test
+year (2018) that is never used for selection, and a categorical and spatial
+verification suite (CSI/POD/FAR/HSS at 0.1–10 mm rain-rate thresholds plus the
+fractions skill score) alongside MSE/RMSE/MAE.
+
+## Layout
+
+```
+docs/USER_GUIDE.md  installation, data, training, evaluation, and troubleshooting
+docs/TUTORIAL.md  step-by-step run on the RainNet archive
+examples/synthetic_demo.py  CPU-only evaluator demonstration; no RainNet download
+examples/view_data_sample.py  per-frame statistics and panel for a data sample
+data_samples/   five real 20-frame inspection windows (see data_samples/README.md)
+corrected/     model + training code (the exact code that produced the paper
+               numbers)
+  model_nowcast.py            ConvLSTM family, ConvLSTM encoder-forecaster,
+                              U-Net, SimVP v1, TAU, losses
+  model_ConvLSTM.py           ConvLSTM cell
+  main_nowcast_rainnet.py     training entry
+  dataloader/dataloader_rainnet_fixed.py
+  tools/train_function.py, tools/check.py
+benchmark_tools/  data preparation + evaluation
+  rainnet_build_lowres.py     stream-extract the lowres product (clip/140, fp16)
+  rainnet_build_index.py      fixed window index (train 2002-2017 / test 2018)
+  rainnet_build_index_blocked.py
+                              month-blocked validation index for the
+                              sensitivity analysis (seed 20261022; test split
+                              copied unchanged; refuses to write on any
+                              shared frame)
+  rainnet_nowcast_eval.py     paper metrics (MSE/RMSE/MAE, CSI/POD/FAR/HSS);
+                              writes strict JSON (undefined scores -> null)
+  legacy/rainnet_nowcast_eval.e86540e9.py
+                              the evaluator that wrote the pre-2026-10-22
+                              eval JSONs (identical metrics; it wrote NaN
+                              for undefined FAR, normalized to null in
+                              results/eval_jsons/)
+  tau_result_gate.py          accepts a TAU run only if it ended cleanly
+                              (full run or explicit early stop) with finite
+                              best-validation and test metrics
+  tau_eval_waiter_20261022.sh       gated TAU test evaluation, one pass/seed
+  rainnet_extended_eval.py     per-window metrics, FSS, sample dumps,
+                              --split val (tuning-only carve)
+  rainnet_pysteps_forecast.py pysteps baselines (LK extrapolation, S-PROG)
+  pysteps_smoke_20261021.py   pysteps install/behaviour smoke test
+  ext_eval_runner_20261021.sh       sequential eval of every benchmark row
+  ext_eval_runner_20261022.sh       same, with the TAU result gate (added the
+                                    three TAU rows; all other rows skipped)
+  pysteps_tuning_20261021.sh        VALIDATION-only pysteps parameter tuning
+local_checks/  tests + analysis
+  test_nowcast_models.py      architecture/causality/param-count tests
+  test_extended_eval.py       extended-evaluator tests (fake dataset)
+  test_ext_analysis.py        bootstrap/FSS/CSI formula tests
+  ext_analysis_paper1.py      day-block bootstrap CIs, paired tests, FSS,
+                              heavy-rain CSI, train/val overlap disclosure
+  make_figures_paper1.py      paper figures from the eval JSONs (+ pysteps npz)
+  make_figures_paper1_v2.py   Figures 1-10 and E1 of the paper (maps, case
+                              studies, per-window scatter, score curves)
+  paper1_v2_derived_stats.py  test-year statistics, case-window selection
+                              and per-window win rates (needs the archive)
+  appendix_b_tables_paper1.py Appendix B tables from ext_summary.json
+  test_tau_result_gate.py     TAU gate accept/reject cases
+  test_eval_json_safety.py    strict-JSON serialization of undefined scores
+  test_blocked_index.py       blocked-index builder and the loader's
+                              explicit-'val' branch
+results/       eval_jsons/ (24 strict-JSON outputs), analysis/ (EXT_ANALYSIS.md,
+               ext_summary.json, Appendix B tables, pysteps validation-tuning
+               summary and S-PROG grid), rainnet_index.json (the frozen split
+               used in the paper), ext_eval/ (per-window metrics of every
+               row, test-year observation statistics, and the forecast and
+               observed fields of case windows 667 and 865), paper1_v2/
+               (test-year statistics and maps from paper1_v2_derived_stats.py)
+CHECKPOINTS.sha256   sha256 of every released checkpoint (Zenodo deposit)
+MANIFEST.sha256      sha256 of every file in this tree
+```
+
+Note: `benchmark_tools/` was renamed from `queue_bundle/` for this release.
+The former name is still the directory name on the compute server, so a few
+comments and help strings inside the archived orchestration scripts refer to
+`queue_bundle/`; those are historical references and no evaluation script
+was modified. Every file under `corrected/` and `benchmark_tools/` is
+byte-identical to the copy that produced the archived results (see
+`MANIFEST.sha256`). `corrected/dataloader/dataloader_rainnet_fixed.py` and
+`benchmark_tools/rainnet_extended_eval.py` are the versions that ran the
+month-blocked rows. Each takes its new branch only when the index carries an
+explicit `val` list; for `results/rainnet_index.json` both reproduce the
+main-protocol windows bit-for-bit (checked by `test_blocked_index.py`).
+
+To rebuild the month-blocked index (sha256 5e303b16… for the paper run):
+
+```bash
+python benchmark_tools/rainnet_build_index_blocked.py --lowres-dir data/rainnet/lowres \
+  --source-index results/rainnet_index.json --out data/rainnet_blockval/rainnet_index.json
+```
+
+## Environment
+
+Python 3.8–3.10 (3.10 recommended), then `pip install -r requirements.txt`. GPU optional: all
+evaluation runs on CPU; training was done with torch 1.12.1 + CUDA 11.3 on
+RTX 3090s. The pysteps baselines additionally need `pysteps==1.21.5` with
+`opencv-python` (pinned: cv2 5.x requires numpy≥2 and breaks torch 1.12).
+
+## Documentation
+
+- [User guide](docs/USER_GUIDE.md)
+- [Step-by-step tutorial](docs/TUTORIAL.md)
+- [Synthetic-data demo](examples/synthetic_demo.py), which exercises the
+  evaluator on toy data only and does not produce scientific results
+
+## Data
+
+0. Optional: inspect five real archive windows without the download
+   (`data_samples/`, extracted by `benchmark_tools/extract_data_samples.py`).
+1. Download `RainNet_HDF5.zip` (13.6 GB) from the official dataset repository:
+   https://github.com/neuralchen/RainNet (Google Drive link in the README;
+   dataset paper: Chen et al., NeurIPS 2022 Datasets & Benchmarks,
+   arXiv:2012.09700; dataset distributed under CC BY).
+2. Extract only the lowres product (fp16, one .npy per month, exactly the
+   official recipe clip[0,140] mm then /140):
+   `python benchmark_tools/rainnet_build_lowres.py --zip RainNet_HDF5.zip --out data/rainnet/lowres`
+3. Build the window index (or copy `results/rainnet_index.json` for the
+   byte-identical frozen split used in the paper):
+   `python benchmark_tools/rainnet_build_index.py --lowres-dir data/rainnet/lowres --out data/rainnet/rainnet_index.json`
+4. The loader additionally carves a disjoint 750-window validation set from
+   the 6000 train windows with a fixed seed (`random.Random(2026)`); the
+   1500-window 2018 test set is untouched by the carve and never used for
+   selection.
+
+## Training
+
+```bash
+python corrected/main_nowcast_rainnet.py --arch <convlstm_ed|unet|simvp|tau> \
+  --loss <mse|balanced|tau_ddr> --data_path data/rainnet --batch_size 4 \
+  --lr 1e-3 --lr_schedule cosine --num_epochs 50 --early_stop_patience 10 \
+  --log_path logs/<name>.log --checkpoints checkpoints/<name>.pth
+```
+
+Protocol (identical for every benchmark row): 3 seeds (0/1/2), Adam,
+cosine schedule from 1e-3, batch 4, ≤50 epochs, early stopping and
+checkpoint selection on **validation MSE** — plain MSE also for
+balanced-loss rows. The as-released ConvLSTM row keeps its family config
+(batch 2, 20 epochs; see paper Section on the released configuration).
+
+## Evaluation
+
+```bash
+# paper metrics (per-lead MSE/RMSE/MAE, CSI/POD/FAR/HSS at 0.1/0.5/1/2/5/10 mm)
+python benchmark_tools/rainnet_nowcast_eval.py --data-path data/rainnet \
+  --model simvp --checkpoints checkpoints/simvp_mse_rainnet_seed0.pth \
+  --out results/eval_simvp_mse_rainnet_seed0.json
+
+# extended per-window metrics (per-window MSE/MAE, contingency + FSS sums,
+# deterministic sample dumps; identical accumulation order to the eval above)
+python benchmark_tools/rainnet_extended_eval.py --data-path data/rainnet \
+  --model simvp --checkpoints checkpoints/simvp_mse_rainnet_seed0.pth \
+  --tag simvp_mse_rainnet_seed0 --out-dir artifacts/ext_eval
+
+# pysteps baselines: parameters tuned on VALIDATION ONLY (never test) via
+# benchmark_tools/pysteps_tuning_20261021.sh, then ONE test pass per method:
+python benchmark_tools/rainnet_extended_eval.py --data-path data/rainnet \
+  --model pysteps_sprog --pysteps-args '{"ar_order": 2, "n_cascade_levels": 8, "precip_thr": 0.1, "t_flow": 10}' \
+  --tag pysteps_sprog --out-dir artifacts/ext_eval
+
+# day-block bootstrap CIs, paired tests, FSS/heavy-rain tables, overlap audit
+python local_checks/ext_analysis_paper1.py --ext-dir artifacts/ext_eval \
+  --eval-dir results/eval_jsons --index-json results/rainnet_index.json
+
+# figures (pysteps rows need their ext npz in --ext-dir; skipped otherwise)
+python local_checks/make_figures_paper1.py --data-dir results/eval_jsons \
+  --ext-dir artifacts/ext_eval --out-dir artifacts/figures
+
+# Figures 1-10 and E1 of the paper, from the shipped files only
+python local_checks/make_figures_paper1_v2.py --data-dir results/eval_jsons \
+  --ext-dir results/ext_eval --v2-dir results/paper1_v2 \
+  --out-dir artifacts/figures_v2
+```
+
+## Tests
+
+Self-contained (small fake datasets are generated; no RainNet download needed):
+
+```bash
+python local_checks/test_nowcast_models.py    # architectures, causality, pinned param counts
+python local_checks/test_extended_eval.py     # extended evaluator, FSS brute force, val carve
+python local_checks/test_ext_analysis.py      # bootstrap/FSS/CSI formula tests
+python local_checks/test_tau_result_gate.py   # TAU early-stop result gate
+python local_checks/test_eval_json_safety.py  # strict JSON for undefined scores
+```
+
+Release copies of the tests differ from the originals only in release-layout
+details: the default code-directory name (`corrected/`), the `benchmark_tools/`
+path, and scratch output written to system temporary directories. The tested
+behavior is unchanged.
+
+## Results and provenance
+
+- `results/eval_jsons/` — the strict-JSON outputs behind every paper number.
+  Each records the model, checkpoint path, unit conversion, window count and
+  observed data range. Files written before 2026-10-22 came from the legacy
+  evaluator (included at `benchmark_tools/legacy/`; identical metrics, with
+  NaN values normalized to null).
+- `corrected/` and `benchmark_tools/` — byte-identical to the copies that
+  produced the archived results. `MANIFEST.sha256` pins their checksums,
+  e.g. `rainnet_nowcast_eval.py` (b9286227…) and
+  `rainnet_extended_eval.py` (9d16b7de…).
+- `CHECKPOINTS.sha256` — sha256 of every released checkpoint (shipped as a
+  Zenodo deposit; not in the git tree).
+- `MANIFEST.sha256` — sha256 of every file in this repository.
+
+## License
+
+MIT for this code. The RainNet dataset is Chen et al. 2022 (CC BY) and must
+be downloaded from its official repository; cite the dataset paper.

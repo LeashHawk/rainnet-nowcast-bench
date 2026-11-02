@@ -1,0 +1,96 @@
+{
+  "note": "validation-only pysteps tuning (seeded 750-window carve from train years); NEVER paper numbers - test numbers come only from the single final test-split pass",
+  "all": {
+    "lk_t10": {
+      "model": "pysteps_lk_extrap",
+      "pysteps_args": {
+        "t_flow": 10
+      },
+      "mse_mm2": 0.42318617898505284,
+      "mae_mm": 0.10435335555230442
+    },
+    "lk_t20": {
+      "model": "pysteps_lk_extrap",
+      "pysteps_args": {
+        "t_flow": 20
+      },
+      "mse_mm2": 0.42318617898505284,
+      "mae_mm": 0.10435335555230442
+    },
+    "lk_t5": {
+      "model": "pysteps_lk_extrap",
+      "pysteps_args": {
+        "t_flow": 5
+      },
+      "mse_mm2": 0.4236297722249051,
+      "mae_mm": 0.10471942971886705
+    },
+    "sprog_a1_c6_p0.1": {
+      "model": "pysteps_sprog",
+      "pysteps_args": {
+        "ar_order": 1,
+        "n_cascade_levels": 6,
+        "precip_thr": 0.1,
+        "t_flow": 10
+      },
+      "mse_mm2": 0.41141385247619794,
+      "mae_mm": 0.10139618578652564
+    },
+    "sprog_a1_c8_p0.1": {
+      "model": "pysteps_sprog",
+      "pysteps_args": {
+        "ar_order": 1,
+        "n_cascade_levels": 8,
+        "precip_thr": 0.1,
+        "t_flow": 10
+      },
+      "mse_mm2": 0.41136749956379626,
+      "mae_mm": 0.10141395717879921
+    },
+    "sprog_a2_c6_p0.1": {
+      "model": "pysteps_sprog",
+      "pysteps_args": {
+        "ar_order": 2,
+        "n_cascade_levels": 6,
+        "precip_thr": 0.1,
+        "t_flow": 10
+      },
+      "mse_mm2": 0.4072805280950518,
+      "mae_mm": 0.10116334135699255
+    },
+    "sprog_a2_c8_p0.1": {
+      "model": "pysteps_sprog",
+      "pysteps_args": {
+        "ar_order": 2,
+        "n_cascade_levels": 8,
+        "precip_thr": 0.1,
+        "t_flow": 10
+      },
+      "mse_mm2": 0.4069977620843653,
+      "mae_mm": 0.101166111088482
+    }
+  },
+  "chosen": {
+    "pysteps_sprog": {
+      "model": "pysteps_sprog",
+      "pysteps_args": {
+        "ar_order": 2,
+        "n_cascade_levels": 8,
+        "precip_thr": 0.1,
+        "t_flow": 10
+      },
+      "mse_mm2": 0.4069977620843653,
+      "mae_mm": 0.101166111088482,
+      "tag": "sprog_a2_c8_p0.1"
+    },
+    "pysteps_lk_extrap": {
+      "model": "pysteps_lk_extrap",
+      "pysteps_args": {
+        "t_flow": 10
+      },
+      "mse_mm2": 0.42318617898505284,
+      "mae_mm": 0.10435335555230442,
+      "tag": "lk_t10"
+    }
+  }
+}

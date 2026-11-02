@@ -1,0 +1,100 @@
+{
+ "description": "Inspection excerpts from the RainNet archive, one 20-frame window per file (10 input hours + 10 target hours), raw mm values.",
+ "normalization_note": "benchmark inputs are clip[0, 140] mm then /140 (rainnet_build_lowres.py); apply before model use",
+ "producing_tool": "benchmark_tools/extract_data_samples.py",
+ "selection_rule": "scan every 20-frame window of the month; keep the 3 non-overlapping windows with the highest mean target rain rate (frames 10..19; greedy down the ranking) and the 2 closest to the month median of that statistic (ties resolved by earlier start hour)",
+ "source_archive": "RainNet_HDF5.zip (Chen et al. 2022, distributed under CC BY; download from https://github.com/neuralchen/RainNet)",
+ "split_note": "these excerpts are not part of any train/validation/test split and are not used by any evaluation in the paper",
+ "windows": [
+  {
+   "dtype": "float32",
+   "file": "lowres_samples/2002_07_w0489.npy",
+   "max_mm": 45.56077194213867,
+   "mean_target_rate_mm": 0.17368264496326447,
+   "min_mm": 0.0,
+   "month": "2002_07",
+   "rule": "rainiest",
+   "sha256": "b37cf7c3a403058a322a4f08c1986bb576cce8d27806d8a70a3e4df4c7d8c32e",
+   "shape": [
+    208,
+    333,
+    20
+   ],
+   "source_member": "2002_07.hdf5",
+   "start_frame": 489,
+   "unit": "mm, raw archive values (no normalization applied)"
+  },
+  {
+   "dtype": "float32",
+   "file": "lowres_samples/2002_07_w0223.npy",
+   "max_mm": 45.763587951660156,
+   "mean_target_rate_mm": 0.16476304829120636,
+   "min_mm": 0.0,
+   "month": "2002_07",
+   "rule": "rainiest",
+   "sha256": "b2903b7b02d878772c0d4ea36986cfb05040d431cd73f20a00f22fd3baec36a6",
+   "shape": [
+    208,
+    333,
+    20
+   ],
+   "source_member": "2002_07.hdf5",
+   "start_frame": 223,
+   "unit": "mm, raw archive values (no normalization applied)"
+  },
+  {
+   "dtype": "float32",
+   "file": "lowres_samples/2002_07_w0661.npy",
+   "max_mm": 31.818645477294922,
+   "mean_target_rate_mm": 0.158932164311409,
+   "min_mm": 0.0,
+   "month": "2002_07",
+   "rule": "rainiest",
+   "sha256": "68b2f6e2bebe290f93a119690de91b392dda5d068bf174a64cc22fab62cd52ad",
+   "shape": [
+    208,
+    333,
+    20
+   ],
+   "source_member": "2002_07.hdf5",
+   "start_frame": 661,
+   "unit": "mm, raw archive values (no normalization applied)"
+  },
+  {
+   "dtype": "float32",
+   "file": "lowres_samples/2002_07_w0637.npy",
+   "max_mm": 31.263486862182617,
+   "mean_target_rate_mm": 0.07871615141630173,
+   "min_mm": 0.0,
+   "month": "2002_07",
+   "rule": "nearest month median",
+   "sha256": "eef4c4f90ac505e31095439b216ba80b76a0b30be76e1e02d404065df6b593d8",
+   "shape": [
+    208,
+    333,
+    20
+   ],
+   "source_member": "2002_07.hdf5",
+   "start_frame": 637,
+   "unit": "mm, raw archive values (no normalization applied)"
+  },
+  {
+   "dtype": "float32",
+   "file": "lowres_samples/2002_07_w0170.npy",
+   "max_mm": 52.43633270263672,
+   "mean_target_rate_mm": 0.07879320532083511,
+   "min_mm": 0.0,
+   "month": "2002_07",
+   "rule": "nearest month median",
+   "sha256": "496a0137edf9b409ba171755d7ddba8fc999cc6600bb91cdfd9d653465568a29",
+   "shape": [
+    208,
+    333,
+    20
+   ],
+   "source_member": "2002_07.hdf5",
+   "start_frame": 170,
+   "unit": "mm, raw archive values (no normalization applied)"
+  }
+ ]
+}
