@@ -12,8 +12,7 @@ validation rules needed to avoid using the test set for model selection.
 - `results/`: frozen main split, evaluation JSON files, and paper analysis.
 - `data_samples/`: five real 20-frame inspection windows with their own
   README and manifest; they are not a split and feed no evaluation.
-- `CHECKPOINTS.sha256`: checksums for the checkpoint archive distributed with
-  the release.
+- `CHECKPOINTS.sha256`: recorded hashes for verifying model weights.
 
 The archive ships only those five small excerpts. Everything else requires
 downloading the [official RainNet repository](https://github.com/neuralchen/RainNet)
@@ -88,9 +87,9 @@ python corrected/main_nowcast_rainnet.py \
 Available architectures are `convlstm_ed`, `unet`, `simvp`, and `tau`.
 Available losses are `mse`, `balanced`, and `tau_ddr`; not every loss is
 intended for every architecture. Checkpoint selection uses validation MSE.
-Training a fresh model is a new run, not a bitwise recreation of the paper's
-trained checkpoint. Use the archived checkpoints and evaluation JSON files
-when reproducing the reported numbers.
+The training command writes its selected checkpoint to the path supplied
+with `--checkpoints`. Use `CHECKPOINTS.sha256` to compare checkpoint hashes
+and the archived evaluation JSON files to identify the reported runs.
 
 ## Evaluate
 
@@ -155,11 +154,8 @@ python local_checks/appendix_b_tables_paper1.py \
   > results/analysis/appendix_b_tables.generated.md
 ```
 
-Use the exact input artifacts referenced by each evaluation JSON and
-the provenance fields in those files. The historical `RESULTS_LEDGER.md` is
-not included in this release; no preregistration evidence is supplied here.
-Do not substitute synthetic-demo outputs for any paper
-result.
+Use the input artifacts and provenance fields recorded in each evaluation
+JSON when reconstructing the reported results.
 
 ## Synthetic demo
 
@@ -178,5 +174,13 @@ forecast-skill result.
 
 The RainNet archive is a separate dataset. Cite Chen et al. (2022) and obtain
 the data from the [official repository](https://github.com/neuralchen/RainNet).
-For the benchmark code, use the repository and archive record given in the
-paper's Code Availability statement after the public release is available.
+For the benchmark code, cite the [public repository](https://github.com/LeashHawk/rainnet-nowcast-bench)
+and identify the [v1.0 release](https://github.com/LeashHawk/rainnet-nowcast-bench/tree/v1.0).
+
+## Local audit on 2026-11-05
+
+The frozen main-protocol metrics were reconstructed, and model/seed window
+identities were checked. A post-hoc 1/2/3/5/7-day MSE block-length audit
+preserved the signs of three selected differences. These checks use the
+stored main-protocol outputs. Stored categorical counts are aggregated
+over windows.

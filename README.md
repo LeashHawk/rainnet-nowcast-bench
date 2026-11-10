@@ -1,9 +1,11 @@
-> Repository status (2026-11-03): source repository at https://github.com/LeashHawk/rainnet-nowcast-bench, currently private; the authors plan to make it public at manuscript submission. Checkpoint downloads, blocked-protocol artifacts and historical ledger evidence remain outstanding. See [repository setup and release gaps](docs/REPOSITORY_SETUP_zh.md).
-> New seeded runs: `python scripts/train_seeded.py --seed 0 -- <training arguments>`. Archived scientific source is unchanged; see `docs/provenance/` for original documentation and manifest.
+> Public source repository: https://github.com/LeashHawk/rainnet-nowcast-bench. Release: [v1.0](https://github.com/LeashHawk/rainnet-nowcast-bench/tree/v1.0).
+> Archived scientific source and documentation provenance are recorded in `docs/provenance/`. Seeded runs: `python scripts/train_seeded.py --seed 0 -- <training arguments>`.
 
 # RainNet hourly precipitation nowcasting benchmark
 
-Authors: Anlin Zhang, Shihao Li, Xibei Yu, Xinyue Xing, and Jiaqi Liu.
+Paper authors: Anlin Zhang, Shihao Li, Xibei Yu, Xinyue Xing, Jiaqi Liu, Jialin Wei, Yishuo Wang, and Junju Du.
+
+Code developers: Anlin Zhang and Shihao Li.
 
 Code and result provenance for the paper *"Validation-isolated benchmarking
 of hourly gridded precipitation nowcasting on the RainNet archive: classical,
@@ -86,7 +88,7 @@ results/       eval_jsons/ (24 strict-JSON outputs), analysis/ (EXT_ANALYSIS.md,
                row, test-year observation statistics, and the forecast and
                observed fields of case windows 667 and 865), paper1_v2/
                (test-year statistics and maps from paper1_v2_derived_stats.py)
-CHECKPOINTS.sha256   sha256 of every released checkpoint (Zenodo deposit)
+CHECKPOINTS.sha256   recorded checkpoint hashes for verifying model weights
 MANIFEST.sha256      sha256 of every file in this tree
 ```
 
@@ -137,7 +139,7 @@ RTX 3090s. The pysteps baselines additionally need `pysteps==1.21.5` with
 3. Build the window index (or copy `results/rainnet_index.json` for the
    byte-identical frozen split used in the paper):
    `python benchmark_tools/rainnet_build_index.py --lowres-dir data/rainnet/lowres --out data/rainnet/rainnet_index.json`
-4. The loader additionally carves a disjoint 750-window validation set from
+4. The loader additionally carves a 750-window validation set with distinct window identifiers (but shared frames) from
    the 6000 train windows with a fixed seed (`random.Random(2026)`); the
    1500-window 2018 test set is untouched by the carve and never used for
    selection.
@@ -151,7 +153,7 @@ python corrected/main_nowcast_rainnet.py --arch <convlstm_ed|unet|simvp|tau> \
   --log_path logs/<name>.log --checkpoints checkpoints/<name>.pth
 ```
 
-Protocol (identical for every benchmark row): 3 seeds (0/1/2), Adam,
+Common protocol (with the legacy-row exception below): 3 seeds (0/1/2), Adam,
 cosine schedule from 1e-3, batch 4, ≤50 epochs, early stopping and
 checkpoint selection on **validation MSE** — plain MSE also for
 balanced-loss rows. The as-released ConvLSTM row keeps its family config
@@ -219,8 +221,7 @@ behavior is unchanged.
   produced the archived results. `MANIFEST.sha256` pins their checksums,
   e.g. `rainnet_nowcast_eval.py` (b9286227…) and
   `rainnet_extended_eval.py` (9d16b7de…).
-- `CHECKPOINTS.sha256` — sha256 of every released checkpoint (shipped as a
-  Zenodo deposit; not in the git tree).
+- `CHECKPOINTS.sha256` — recorded checkpoint hashes for verifying model weights.
 - `MANIFEST.sha256` — sha256 of every file in this repository.
 
 ## License

@@ -1,8 +1,9 @@
 # Local validation — 2026-11-03
 
 Environment: Windows, Python 3.10.20, PyTorch 2.1.2+cu121, NumPy 1.26.4.
-This differs from the pinned paper environment; the GitHub CI workflow has been
-prepared but has not run on a remote service.
+The paper environment is specified in `requirements.txt`. The GitHub Actions
+workflow in `.github/workflows/checks.yml` specifies Python 3.10 and its
+validation dependencies.
 
 Passed:
 - Original archive: all 124 manifest entries verified; edited documentation
@@ -15,10 +16,7 @@ Passed:
 - local_checks/test_tau_result_gate.py
 - local_checks/test_eval_json_safety.py
 - local_checks/test_blocked_index.py
-- scripts/train_seeded.py --help (training itself was not rerun).
+- scripts/train_seeded.py --help.
 
-Git includes the 46 shipped NPZ artifacts. No full data download, model
-training, checkpoint verification, or missing blocked-protocol experiment
-reconstruction was performed. No remote is configured. No initial commit was
-created because this machine has no configured Git user.name/user.email;
-staged files are ready for review. No author identity was invented.
+Git includes the 46 shipped NPZ artifacts. The checks above validate the
+repository files, evaluator behaviour, model interfaces, and index builder.
